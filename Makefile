@@ -1,4 +1,4 @@
-DESCRIPTION = Termeinal Emulator
+DESCRIPTION = Terminal Emulator
 URL = https://github.com/ikle/term
 
 LIBNAME	= ikle-term
