@@ -22,4 +22,21 @@ int ccs_data_clear_up    (struct ccs_data *o, unsigned y);
 int ccs_data_clear_down  (struct ccs_data *o, unsigned y);
 int ccs_data_clear_all   (struct ccs_data *o);
 
+/* 8.2.6 Editor functions */
+
+int ccs_data_dch  (struct ccs_data *o, int count);
+int ccs_data_dl   (struct ccs_data *o, int count);
+
+int ccs_data_ich  (struct ccs_data *o, int count);
+int ccs_data_il   (struct ccs_data *o, int count);
+
+int ccs_data_ech  (struct ccs_data *o, int count);
+int ccs_data_el   (struct ccs_data *o, int mode);
+int ccs_data_ed   (struct ccs_data *o, int mode);
+
+/* 8.2.8 Display control functions */
+
+int ccs_data_su   (struct ccs_data *o, int count);
+int ccs_data_sd   (struct ccs_data *o, int count);
+
 #endif  /* CCS_DATA_EDIT_H */
