@@ -6,7 +6,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <string.h>
+
 #include "tty-proto.h"
+
+#define ARRAY_SIZE(a)  (sizeof (a) / sizeof ((a)[0]))
 
 enum tty_proto_mode {
 	TTY_STATE_START = 0,
@@ -21,7 +25,11 @@ enum tty_proto_mode {
 
 static int tty_proto_next (struct tty_proto *o, unsigned mode)
 {
+	if (mode != TTY_STATE_START)
+		memset (o->arg, 0, sizeof (o->arg));
+
 	o->mode = mode;
+	o->index = 0;
 	return 1;
 }
 
@@ -93,19 +101,27 @@ static int tty_proto_escape (struct tty_proto *o, wchar_t c)
 
 static int tty_proto_wait_st (struct tty_proto *o, wchar_t c)
 {
-	/* Todo: accumulate parameter string here */
+	if (o->index < ARRAY_SIZE (o->arg))
+		o->arg[o->index++] = c;
+
 	return 1;
 }
 
 static int tty_proto_csi (struct tty_proto *o, wchar_t c)
 {
-	if (c >= 0x40 && c < 0x7f) {
-		/* Todo: parse command here */
-
+	if (c >= 0x30 && c <= 0x39) {
+		if (o->index < ARRAY_SIZE (o->arg))
+			o->arg[o->index] = o->arg[o->index] * 10 + (c - 0x30);
+	}
+	else if (c == 0x3b) {
+		if (o->index < ARRAY_SIZE (o->arg))
+			++o->index;
+	}
+	else if (c >= 0x40 && c < 0x7f) {
+		tty_proto_do_csi (o, c);
 		return tty_proto_next (o, TTY_STATE_START);
 	}
 
-	/* Todo: accumulate parameter string here */
 	return 1;
 }
 

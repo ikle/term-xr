@@ -18,6 +18,8 @@ struct tty_proto {
 	struct tty_peer  *peer;
 	struct tty_state *state;
 	unsigned char mode;
+	unsigned char index;
+	wchar_t arg[127];
 };
 
 static inline
@@ -43,5 +45,7 @@ int tty_proto_puts (struct tty_proto *o, const void *buf, unsigned count)
 }
 
 int tty_proto_printf (struct tty_proto *o, const char *fmt, ...);
+
+int tty_proto_do_csi (struct tty_proto *o, int c);
 
 #endif  /* TTY_PROTO_H */
