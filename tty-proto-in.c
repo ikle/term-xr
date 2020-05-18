@@ -45,6 +45,7 @@ static int tty_proto_c0 (struct tty_proto *o, wchar_t c)
 	struct tty_state *s = o->state;
 
 	switch (c) {
+	case 0x07:	return tty_proto_commit (o);
 	case 0x08:	return tty_state_move_x (s, -1);
 	case 0x09:	return tty_state_tabulate (s);
 	case 0x0a:
