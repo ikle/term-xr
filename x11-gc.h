@@ -25,6 +25,7 @@ void x11_gc_fini (struct x11_gc *o);
 
 int x11_gc_set_color_rgba (struct x11_gc *o, int r, int g, int b, int a);
 int x11_gc_set_color (struct x11_gc *o, const char *pattern);
+int x11_gc_set_color_index (struct x11_gc *o, int i);
 
 int x11_gc_set_font (struct x11_gc *o, const char *pattern);
 
