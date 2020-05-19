@@ -21,6 +21,7 @@ enum tty_proto_mode {
 	TTY_STATE_OSC,
 	TTY_STATE_PM,
 	TTY_STATE_APC,
+	TTY_STATE_SCS,		/* DEC, set character set */
 };
 
 static int tty_proto_next (struct tty_proto *o, unsigned mode)
@@ -90,6 +91,10 @@ static int tty_proto_escape (struct tty_proto *o, wchar_t c)
 		return tty_proto_c1 (o, c + 0x40);
 
 	switch (c) {
+	case 0x28: case 0x29: case 0x2a: case 0x2b:
+		o->arg[o->index++] = c - 0x28;
+		return tty_proto_next (o, TTY_STATE_SCS);
+
 	case 0x37:	tty_state_save    (o->state);		break;
 	case 0x38:	tty_state_restore (o->state);		break;
 	case 0x3d:	s->flags |=  TTY_FLAGS_APPLICATION;	break;
@@ -98,6 +103,23 @@ static int tty_proto_escape (struct tty_proto *o, wchar_t c)
 	}
 
 	return tty_proto_next (o, TTY_STATE_START);
+}
+
+static int tty_proto_wait_scs (struct tty_proto *o, wchar_t c)
+{
+	struct tty_state *s = o->state;
+
+	if (c >= 0x30 && c <= 0x7e) {
+		if (o->index == 1)  /* we support registered sets only */
+			s->charset[o->arg[0]] = c;
+
+		return tty_proto_next (o, TTY_STATE_START);
+	}
+
+	if (o->index < ARRAY_SIZE (o->arg))
+		o->arg[o->index++] = c;
+
+	return 1;
 }
 
 static int tty_proto_wait_st (struct tty_proto *o, wchar_t c)
@@ -141,7 +163,8 @@ static int tty_proto_action (struct tty_proto *o, wchar_t c)
 	case TTY_STATE_SOS:
 	case TTY_STATE_OSC:
 	case TTY_STATE_PM:
-	case TTY_STATE_APC:	return tty_proto_wait_st (o, c);
+	case TTY_STATE_APC:	return tty_proto_wait_st  (o, c);
+	case TTY_STATE_SCS:	return tty_proto_wait_scs (o, c);
 	}
 
 	tty_state_put (o->state, c);
