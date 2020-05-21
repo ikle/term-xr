@@ -87,8 +87,10 @@ static int tty_proto_escape (struct tty_proto *o, wchar_t c)
 {
 	struct tty_state *s = o->state;
 
-	if (c >= 0x40 && c < 0x50)
+	if (c >= 0x40 && c < 0x60) {
+		tty_proto_next (o, TTY_STATE_START);
 		return tty_proto_c1 (o, c + 0x40);
+	}
 
 	switch (c) {
 	case 0x28: case 0x29: case 0x2a: case 0x2b:
