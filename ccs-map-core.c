@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2020 Alexei A. Smekalkine <ikle@ikle.ru>
  *
- * Standard: ECMA-35, ECMA-48
+ * Standard: ECMA-35, ECMA-48, ISO 2375
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
@@ -11,7 +11,7 @@
 
 /* NOTE: assume wchar_t stores unicode character/codepoint */
 
-struct ccs_charset ccs_dec = {
+struct ccs_charset ccs_map_dec = {
 	0x5f, 32,
 
 	{
@@ -23,4 +23,16 @@ struct ccs_charset ccs_dec = {
 	        0x23Bb, 0x2500, 0x23Bc, 0x23Bd,  0x251c, 0x2524, 0x2534, 0x252c,
 	        0x2502, 0x2264, 0x2265, 0x03c0,  0x2260,   0xa3,   0xb7,
 	}
+};
+
+/* ISO-IR 002, 04/00 - international reference version (IRV) of ISO 646 */
+
+struct ccs_charset ccs_map_irv = {
+	0x24, 1, { 0xa4 },
+};
+
+/* ISO-IR 004, 04/01 - Unated Kingdom 7-bit data code */
+
+struct ccs_charset ccs_map_uk = {
+	0x24, 1, { 0xa3 },
 };

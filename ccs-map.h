@@ -18,7 +18,9 @@ struct ccs_charset {
 	wchar_t map[];
 };
 
-struct ccs_charset ccs_dec;
+struct ccs_charset ccs_map_dec;
+struct ccs_charset ccs_map_irv;
+struct ccs_charset ccs_map_uk;
 
 struct ccs_map {
 	struct ccs_charset *g[4];	/* designated charsets	*/
